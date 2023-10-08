@@ -1,15 +1,17 @@
-package bredo.cmd.uni.link;
+package bredo.cmd.uni.link.handlers;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public final class UniLinkLogger {
 
-    private final static Logger logger;
+    private static Logger logger;
+
+    private static boolean logMessages;
 
     static {
         logger = Logger.getLogger("UniLink");
-
+        logMessages = true;
     }
 
     public static Logger getLogger() {
@@ -17,26 +19,38 @@ public final class UniLinkLogger {
     }
 
     public static void info(final Object... messages) {
-        if (messages == null || messages.length == 0) {
-            new NullPointerException("Message cannot be null or empty!").printStackTrace();
-            return;
-        }
+        if (notValid(messages)) return;
         for (final Object message : messages) getLogger().log(Level.INFO, message.toString());
     }
 
     public static void warning(final Object... messages) {
-        if (messages == null || messages.length == 0) {
-            new NullPointerException("Message cannot be null or empty!").printStackTrace();
-            return;
-        }
+        if (notValid(messages)) return;
         for (final Object message : messages) getLogger().log(Level.WARNING, message.toString());
     }
 
     public static void error(final Object... messages) {
+        if (notValid(messages)) return;
+        for (final Object message : messages) getLogger().log(Level.SEVERE, message.toString());
+    }
+
+    private static boolean notValid(final Object... messages) {
+        if (!isLogMessages()) return true;
         if (messages == null || messages.length == 0) {
             new NullPointerException("Message cannot be null or empty!").printStackTrace();
-            return;
+            return true;
         }
-        for (final Object message : messages) getLogger().log(Level.SEVERE, message.toString());
+        return false;
+    }
+
+    public static void setLogger(final Logger logger) {
+        UniLinkLogger.logger = logger;
+    }
+
+    public static boolean isLogMessages() {
+        return logMessages;
+    }
+
+    public static void setLogMessages(final boolean logMessages) {
+        UniLinkLogger.logMessages = logMessages;
     }
 }
